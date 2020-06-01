@@ -31,6 +31,7 @@
  */
 #![no_std]
 
+#[cfg(test)]
 mod tests;
 
 /// LInt base value. All values smaller than this value are encoded as
@@ -145,7 +146,8 @@ pub fn decoded_size(header : u8) -> usize {
 /// 
 /// Returns:
 /// 
-/// * The size of the ILInt in bytes.
+/// * Ok(value,size): The value and the number of bytes used.
+/// * Err(DecodeError): In case of an error.
 /// 
 pub fn decode(value: &[u8]) -> Result<(u64, usize), DecodeError> {
 
