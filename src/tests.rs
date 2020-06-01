@@ -32,7 +32,7 @@
 use super::*;
 
 pub struct SampleILInt {
-    pub value: u64,
+    pub value: u64, 
     pub encoded_size: usize,
     pub encoded: [u8; 10],
 }
