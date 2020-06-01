@@ -103,11 +103,12 @@ pub fn encode(value: u64, enc: &mut[u8]) -> Result<usize, ()> {
         if size == 1 {
             enc[0] = value as u8
         } else {
-            enc[0] = ((ILINT_BASE as usize) + (size - 2)) as u8;
-            let mut v = value - ILINT_BASE_U64;
-            for  i in (size - 1)..0 {
-                enc[i] = (v & 0xFF) as u8;
-                v = v >> 8;
+            enc[0] = (ILINT_BASE + ((size - 2) as u8)) as u8;
+            let v = value - ILINT_BASE_U64;
+            let mut shift = 8 * (size - 1);
+            for i in 1..size {
+                shift -= 8;
+                enc[i] = ((v >> shift) & 0xFF) as u8;                
             }
         }
         Ok(size)
@@ -148,7 +149,9 @@ pub fn decoded_size(header : u8) -> usize {
 /// 
 pub fn decode(value: &[u8]) -> Result<(u64, usize), DecodeError> {
 
-    assert!(value.len() != 0, "value must have at least 1 byte.");
+    if value.len() == 0 {
+        return Err(DecodeError::Corrupted);
+    }
 
     let size = decoded_size(value[0]);
     if size > value.len() {
@@ -162,7 +165,7 @@ pub fn decode(value: &[u8]) -> Result<(u64, usize), DecodeError> {
         for i in 1 .. size {
             v = (v << 8) + (value[i] as u64);
         }
-        if v > (0xFFFFFFFFFFFFFFFF - ILINT_BASE_U64) {
+        if v > 0xFFFFFFFFFFFFFF07 {
             Err(DecodeError::Overflow)
         } else {
             Ok((v + ILINT_BASE_U64, size))

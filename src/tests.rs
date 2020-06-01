@@ -31,7 +31,61 @@
  */
 #[cfg(test)]
 
-use super::*;
+ use super::*;
+
+#[cfg(test)]
+pub struct SampleILInt {
+    pub value: u64,
+    pub encoded_size: usize,
+    pub encoded: [u8; 10],
+}
+
+#[cfg(test)]
+const FILLER: u8 = 0xA5;
+
+#[cfg(test)]
+const SAMPLE_VALUES: [SampleILInt; 10] = 
+    [SampleILInt {
+        value : 0xF7, 
+        encoded_size: 1,
+        encoded: [0xF7, FILLER, FILLER, FILLER, FILLER, FILLER, FILLER, FILLER, FILLER, FILLER]},
+    SampleILInt{
+        value : 0xF8, 
+        encoded_size: 2,
+        encoded: [0xF8, 0x00, FILLER, FILLER, FILLER, FILLER, FILLER, FILLER, FILLER, FILLER]},
+    SampleILInt{
+        value : 0x021B, 
+        encoded_size: 3,
+        encoded: [0xF9, 0x01, 0x23, FILLER, FILLER, FILLER, FILLER, FILLER, FILLER, FILLER]},
+    SampleILInt{
+        value : 0x01243D,
+        encoded_size: 4,
+        encoded: [0xFA, 0x01, 0x23, 0x45, FILLER, FILLER, FILLER, FILLER, FILLER, FILLER]},
+    SampleILInt{
+        value : 0x0123465F,
+        encoded_size: 5,
+        encoded: [0xFB, 0x01, 0x23, 0x45, 0x67, FILLER, FILLER, FILLER, FILLER, FILLER]},
+    SampleILInt{
+        value : 0x0123456881,
+        encoded_size: 6,
+        encoded: [0xFC, 0x01, 0x23, 0x45, 0x67, 0x89, FILLER, FILLER, FILLER, FILLER]},
+    SampleILInt{
+        value : 0x012345678AA3,
+        encoded_size: 7,
+        encoded: [0xFD, 0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, FILLER, FILLER, FILLER]},
+    SampleILInt{
+        value : 0x123456789ACC5,
+        encoded_size: 8,
+        encoded: [0xFE, 0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, FILLER, FILLER]},
+    SampleILInt{
+        value : 0x123456789ABCEE7,
+        encoded_size: 9,
+        encoded: [0xFF, 0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF, FILLER]},
+    SampleILInt{
+        value : 0xFFFFFFFFFFFFFFFF,
+        encoded_size: 9,
+        encoded: [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x07, FILLER]},
+    ];
 
 #[test]
 fn test_constants() {
@@ -60,30 +114,30 @@ fn test_encoded_size() {
     assert_eq!(encoded_size(0xFFFFFFFFFFFFFFFF), 9);
 }
 
+
 #[test]
-fn test_encode() -> Result<(), ()> {
+fn test_encode() {
 
     for i in 0..0xF8 {
         let mut buff: [u8; 1] = [0];
 
         match encode(i as u64, &mut buff) {
             Ok(v) => assert_eq!(v, 1),
-            Err(()) => return Err(()),
+            Err(()) => panic!("Success expected!"),
         }
         assert_eq!(buff[0], i as u8);
         assert!(encode(i as u64, &mut buff[0..0]).is_err());
     }
 
-    // TODO Complete this test!!!
-    let mut buff: [u8; 2] = [0; 2];
-    let exp: [u8; 2] = [0xF8, 0x00];
-    match encode(0xF8, &mut buff) {
-        Ok(v) => assert_eq!(v, 2),
-        Err(()) => return Err(()),
+    for sample in &SAMPLE_VALUES {
+        let mut buff: [u8;10] = [FILLER; 10];
+        let enc_size = sample.encoded_size;
+        match encode(sample.value, &mut buff[0..enc_size]) {
+            Ok(v) => assert_eq!(v, enc_size),
+            Err(()) => panic!("Success expected!"),
+        }
+        assert_eq!(buff, sample.encoded);
     }
-    assert_eq!(buff, exp);
-
-    Ok(())
 }
 
 #[test]
@@ -103,7 +157,53 @@ fn test_decoded_size() {
 }
 
 #[test]
-fn test_decode() -> Result<(),()> {
-    // TODO This test is missing...
-    Err(())
+fn test_decode() {
+
+    // All with 1 byte
+    for i in 0..0xF8 {
+        let mut buff: [u8; 1] = [0];
+        buff[0] = i as u8;
+
+        match decode(&mut buff) {
+            Ok((v, s)) => {
+                assert_eq!(v, i as u64);
+                assert_eq!(s, 1);
+            },
+            _ => panic!(),
+        }
+    }
+
+    // From samples
+    for sample in &SAMPLE_VALUES {
+        let enc_size = sample.encoded_size;
+        match decode(&sample.encoded[0..enc_size]) {
+            Ok((v, s)) => {
+                assert_eq!(v, sample.value);
+                assert_eq!(s, sample.encoded_size);
+            },
+            _ => panic!(),
+        }
+    }
+
+    // Corrupted due to size
+    let mut encoded: [u8; 9] = [0; 9];
+    for size in 2..10 {
+        encoded[0] = ILINT_BASE + (size  - 2) as u8;
+        for bad_size in 0..size {
+            match decode(&encoded[0..bad_size]) {
+                Err(DecodeError::Corrupted) => {},
+                _ => panic!("Corrupted data expected."),
+            }
+        }
+    }
+
+    // Overflow!
+    let mut encoded: [u8; 9] = [0xFF; 9];
+    for last in 0x08..0x100 {
+        encoded[8] = last as u8;
+        match decode(&encoded[0..9]) {
+            Err(DecodeError::Overflow) => {},
+            _ => panic!("Overflow expected."),
+        }
+    }    
 }
