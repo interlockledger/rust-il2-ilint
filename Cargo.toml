@@ -1,6 +1,6 @@
 [package]
 name = "il2-ilint"
-version = "0.1.0"
+version = "1.0.0"
 description = "InterlockLedger's ILInt implementation in Rust."
 authors = ["InterlockLedger Network", "Fabio Jun Takada Chino", "Cesar Luiz Ferracin"]
 edition = "2018"
