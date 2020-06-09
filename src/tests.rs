@@ -109,7 +109,6 @@ fn test_encoded_size() {
     assert_eq!(encoded_size(0xFFFFFFFFFFFFFFFF), 9);
 }
 
-
 #[test]
 fn test_encode() {
 
@@ -118,10 +117,13 @@ fn test_encode() {
 
         match encode(i as u64, &mut buff) {
             Ok(v) => assert_eq!(v, 1),
-            Err(()) => panic!("Success expected!"),
+            _ => panic!("Success expected!"),
         }
         assert_eq!(buff[0], i as u8);
-        assert!(encode(i as u64, &mut buff[0..0]).is_err());
+        match encode(i as u64, &mut buff[0..0]) {
+            Err(ErrorKind::InsufficientBuffer) => (),
+            _ => panic!("Expected Err(ErrorKind::InsufficientBuffer)"),
+        }
     }
 
     for sample in &SAMPLE_VALUES {
@@ -129,7 +131,7 @@ fn test_encode() {
         let enc_size = sample.encoded_size;
         match encode(sample.value, &mut buff[0..enc_size]) {
             Ok(v) => assert_eq!(v, enc_size),
-            Err(()) => panic!("Success expected!"),
+            _ => panic!("Success expected!"),
         }
         assert_eq!(buff, sample.encoded);
     }
@@ -186,7 +188,7 @@ fn test_decode() {
         encoded[0] = ILINT_BASE + (size  - 2) as u8;
         for bad_size in 0..size {
             match decode(&encoded[0..bad_size]) {
-                Err(DecodeError::Corrupted) => {},
+                Err(ErrorKind::InsufficientBuffer) => {},
                 _ => panic!("Corrupted data expected."),
             }
         }
@@ -197,7 +199,7 @@ fn test_decode() {
     for last in 0x08..0x100 {
         encoded[8] = last as u8;
         match decode(&encoded[0..9]) {
-            Err(DecodeError::Overflow) => {},
+            Err(ErrorKind::Overflow) => {},
             _ => panic!("Overflow expected."),
         }
     }    
