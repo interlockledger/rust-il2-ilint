@@ -3,9 +3,12 @@ name = "il2-ilint"
 version = "1.1.0"
 description = "InterlockLedger's ILInt implementation in Rust."
 authors = ["InterlockLedger Network", "Fabio Jun Takada Chino", "Cesar Luiz Ferracin"]
+homepage = "https://github.com/interlockledger/rust-il2-ilint"
 edition = "2018"
 license-file = "LICENSE"
 keywords = ["interlockledger", "blockchain"]
 categories = ["cryptography::cryptocurrencies", "encoding", "no-std"]
+repository = "https://github.com/interlockledger/rust-il2-ilint"
+readme = "README.md"
 
 [dependencies]
