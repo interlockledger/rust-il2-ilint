@@ -75,15 +75,15 @@ pub fn encoded_size(value: u64) -> usize {
 		2
 	} else if value <= (0xFFFF + ILINT_BASE_U64) {
 		3
-	} else if value <= (0xFFFFFF + ILINT_BASE_U64){
+	} else if value <= (0x00FF_FFFF + ILINT_BASE_U64){
 		4
-	} else if value <= (0xFFFFFFFF + ILINT_BASE_U64){
+	} else if value <= (0xFFFF_FFFF + ILINT_BASE_U64){
 		5
-	} else if value <= (0xFFFFFFFFFF + ILINT_BASE_U64){
+	} else if value <= (0x00FF_FFFF_FFFF + ILINT_BASE_U64){
 		6
-	} else if value <= (0xFFFFFFFFFFFF + ILINT_BASE_U64){
+	} else if value <= (0xFFFF_FFFF_FFFF + ILINT_BASE_U64){
 		7
-	} else if value <= (0xFFFFFFFFFFFFFF + ILINT_BASE_U64){
+	} else if value <= (0x00FF_FFFF_FFFF_FFFF + ILINT_BASE_U64){
 		8
 	} else {
 		9
@@ -108,7 +108,7 @@ pub fn encode(value: u64, enc: &mut[u8]) -> Result<usize> {
     
     let size = encoded_size(value);
     if size > enc.len() {
-        return Err(ErrorKind::InsufficientBuffer);
+        Err(ErrorKind::InsufficientBuffer)
     } else {
         if size == 1 {
             enc[0] = value as u8
@@ -116,9 +116,9 @@ pub fn encode(value: u64, enc: &mut[u8]) -> Result<usize> {
             enc[0] = (ILINT_BASE + ((size - 2) as u8)) as u8;
             let v = value - ILINT_BASE_U64;
             let mut shift = 8 * (size - 1);
-            for i in 1..size {
+            for i in enc.iter_mut().take(size).skip(1) {
                 shift -= 8;
-                enc[i] = ((v >> shift) & 0xFF) as u8;                
+                *i = ((v >> shift) & 0xFF) as u8;                
             }
         }
         Ok(size)
@@ -162,7 +162,7 @@ pub fn decoded_size(header : u8) -> usize {
 /// 
 pub fn decode(value: &[u8]) -> Result<(u64, usize)> {
 
-    if value.len() == 0 {
+    if value.is_empty() {
         return Err(ErrorKind::InsufficientBuffer);
     }
 
@@ -175,10 +175,10 @@ pub fn decode(value: &[u8]) -> Result<(u64, usize)> {
         Ok((value[0] as u64, 1))
     } else {
         let mut v:u64 = 0;
-        for i in 1 .. size {
-            v = (v << 8) + (value[i] as u64);
+        for i in value.iter().take(size).skip(1) {
+            v = (v << 8) + (*i as u64);
         }
-        if v > 0xFFFFFFFFFFFFFF07 {
+        if v > 0xFFFF_FFFF_FFFF_FF07 {
             Err(ErrorKind::Overflow)
         } else {
             Ok((v + ILINT_BASE_U64, size))
