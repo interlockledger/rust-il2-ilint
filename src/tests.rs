@@ -1,23 +1,23 @@
 /*
  * BSD 3-Clause License
- * 
+ *
  * Copyright (c) 2020, InterlockLedger Network
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * * Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
- * 
+ *
  * * Redistributions in binary form must reproduce the above copyright notice,
  *   this list of conditions and the following disclaimer in the documentation
  *   and/or other materials provided with the distribution.
- * 
+ *
  * * Neither the name of the copyright holder nor the names of its
  *   contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -32,55 +32,81 @@
 use super::*;
 
 pub struct SampleILInt {
-    pub value: u64, 
+    pub value: u64,
     pub encoded_size: usize,
     pub encoded: [u8; 10],
 }
 
 const FILLER: u8 = 0xA5;
 
-const SAMPLE_VALUES: [SampleILInt; 10] = 
-    [SampleILInt {
-        value : 0xF7, 
+const SAMPLE_VALUES: [SampleILInt; 10] = [
+    SampleILInt {
+        value: 0xF7,
         encoded_size: 1,
-        encoded: [0xF7, FILLER, FILLER, FILLER, FILLER, FILLER, FILLER, FILLER, FILLER, FILLER]},
-    SampleILInt{
-        value : 0xF8, 
+        encoded: [
+            0xF7, FILLER, FILLER, FILLER, FILLER, FILLER, FILLER, FILLER, FILLER, FILLER,
+        ],
+    },
+    SampleILInt {
+        value: 0xF8,
         encoded_size: 2,
-        encoded: [0xF8, 0x00, FILLER, FILLER, FILLER, FILLER, FILLER, FILLER, FILLER, FILLER]},
-    SampleILInt{
-        value : 0x021B, 
+        encoded: [
+            0xF8, 0x00, FILLER, FILLER, FILLER, FILLER, FILLER, FILLER, FILLER, FILLER,
+        ],
+    },
+    SampleILInt {
+        value: 0x021B,
         encoded_size: 3,
-        encoded: [0xF9, 0x01, 0x23, FILLER, FILLER, FILLER, FILLER, FILLER, FILLER, FILLER]},
-    SampleILInt{
-        value : 0x01243D,
+        encoded: [
+            0xF9, 0x01, 0x23, FILLER, FILLER, FILLER, FILLER, FILLER, FILLER, FILLER,
+        ],
+    },
+    SampleILInt {
+        value: 0x01243D,
         encoded_size: 4,
-        encoded: [0xFA, 0x01, 0x23, 0x45, FILLER, FILLER, FILLER, FILLER, FILLER, FILLER]},
-    SampleILInt{
-        value : 0x0123465F,
+        encoded: [
+            0xFA, 0x01, 0x23, 0x45, FILLER, FILLER, FILLER, FILLER, FILLER, FILLER,
+        ],
+    },
+    SampleILInt {
+        value: 0x0123465F,
         encoded_size: 5,
-        encoded: [0xFB, 0x01, 0x23, 0x45, 0x67, FILLER, FILLER, FILLER, FILLER, FILLER]},
-    SampleILInt{
-        value : 0x0123456881,
+        encoded: [
+            0xFB, 0x01, 0x23, 0x45, 0x67, FILLER, FILLER, FILLER, FILLER, FILLER,
+        ],
+    },
+    SampleILInt {
+        value: 0x0123456881,
         encoded_size: 6,
-        encoded: [0xFC, 0x01, 0x23, 0x45, 0x67, 0x89, FILLER, FILLER, FILLER, FILLER]},
-    SampleILInt{
-        value : 0x012345678AA3,
+        encoded: [
+            0xFC, 0x01, 0x23, 0x45, 0x67, 0x89, FILLER, FILLER, FILLER, FILLER,
+        ],
+    },
+    SampleILInt {
+        value: 0x012345678AA3,
         encoded_size: 7,
-        encoded: [0xFD, 0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, FILLER, FILLER, FILLER]},
-    SampleILInt{
-        value : 0x123456789ACC5,
+        encoded: [
+            0xFD, 0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, FILLER, FILLER, FILLER,
+        ],
+    },
+    SampleILInt {
+        value: 0x123456789ACC5,
         encoded_size: 8,
-        encoded: [0xFE, 0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, FILLER, FILLER]},
-    SampleILInt{
-        value : 0x123456789ABCEE7,
+        encoded: [
+            0xFE, 0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, FILLER, FILLER,
+        ],
+    },
+    SampleILInt {
+        value: 0x123456789ABCEE7,
         encoded_size: 9,
-        encoded: [0xFF, 0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF, FILLER]},
-    SampleILInt{
-        value : 0xFFFFFFFFFFFFFFFF,
+        encoded: [0xFF, 0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF, FILLER],
+    },
+    SampleILInt {
+        value: 0xFFFFFFFFFFFFFFFF,
         encoded_size: 9,
-        encoded: [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x07, FILLER]},
-    ];
+        encoded: [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x07, FILLER],
+    },
+];
 
 #[test]
 fn test_constants() {
@@ -111,7 +137,6 @@ fn test_encoded_size() {
 
 #[test]
 fn test_encode() {
-
     for i in 0..0xF8 {
         let mut buff: [u8; 1] = [0];
 
@@ -127,7 +152,7 @@ fn test_encode() {
     }
 
     for sample in &SAMPLE_VALUES {
-        let mut buff: [u8;10] = [FILLER; 10];
+        let mut buff: [u8; 10] = [FILLER; 10];
         let enc_size = sample.encoded_size;
         match encode(sample.value, &mut buff[0..enc_size]) {
             Ok(v) => assert_eq!(v, enc_size),
@@ -139,7 +164,6 @@ fn test_encode() {
 
 #[test]
 fn test_decoded_size() {
-
     for i in 0..0xF8 {
         assert_eq!(decoded_size(i), 1);
     }
@@ -155,7 +179,6 @@ fn test_decoded_size() {
 
 #[test]
 fn test_decode() {
-
     // All with 1 byte
     for i in 0..0xF8 {
         let mut buff: [u8; 1] = [0];
@@ -165,7 +188,7 @@ fn test_decode() {
             Ok((v, s)) => {
                 assert_eq!(v, i as u64);
                 assert_eq!(s, 1);
-            },
+            }
             _ => panic!(),
         }
     }
@@ -177,7 +200,7 @@ fn test_decode() {
             Ok((v, s)) => {
                 assert_eq!(v, sample.value);
                 assert_eq!(s, sample.encoded_size);
-            },
+            }
             _ => panic!(),
         }
     }
@@ -185,10 +208,10 @@ fn test_decode() {
     // Corrupted due to size
     let mut encoded: [u8; 9] = [0; 9];
     for size in 2..10 {
-        encoded[0] = ILINT_BASE + (size  - 2) as u8;
+        encoded[0] = ILINT_BASE + (size - 2) as u8;
         for bad_size in 0..size {
             match decode(&encoded[0..bad_size]) {
-                Err(ErrorKind::InsufficientBuffer) => {},
+                Err(ErrorKind::InsufficientBuffer) => {}
                 _ => panic!("Corrupted data expected."),
             }
         }
@@ -199,8 +222,8 @@ fn test_decode() {
     for last in 0x08..0x100 {
         encoded[8] = last as u8;
         match decode(&encoded[0..9]) {
-            Err(ErrorKind::Overflow) => {},
+            Err(ErrorKind::Overflow) => {}
             _ => panic!("Overflow expected."),
         }
-    }    
+    }
 }
