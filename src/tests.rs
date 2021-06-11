@@ -62,47 +62,47 @@ const SAMPLE_VALUES: [SampleILInt; 10] = [
         ],
     },
     SampleILInt {
-        value: 0x01243D,
+        value: 0x01_243D,
         encoded_size: 4,
         encoded: [
             0xFA, 0x01, 0x23, 0x45, FILLER, FILLER, FILLER, FILLER, FILLER, FILLER,
         ],
     },
     SampleILInt {
-        value: 0x0123465F,
+        value: 0x0123_465F,
         encoded_size: 5,
         encoded: [
             0xFB, 0x01, 0x23, 0x45, 0x67, FILLER, FILLER, FILLER, FILLER, FILLER,
         ],
     },
     SampleILInt {
-        value: 0x0123456881,
+        value: 0x01_2345_6881,
         encoded_size: 6,
         encoded: [
             0xFC, 0x01, 0x23, 0x45, 0x67, 0x89, FILLER, FILLER, FILLER, FILLER,
         ],
     },
     SampleILInt {
-        value: 0x012345678AA3,
+        value: 0x0123_4567_8AA3,
         encoded_size: 7,
         encoded: [
             0xFD, 0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, FILLER, FILLER, FILLER,
         ],
     },
     SampleILInt {
-        value: 0x123456789ACC5,
+        value: 0x1_2345_6789_ACC5,
         encoded_size: 8,
         encoded: [
             0xFE, 0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, FILLER, FILLER,
         ],
     },
     SampleILInt {
-        value: 0x123456789ABCEE7,
+        value: 0x123_4567_89AB_CEE7,
         encoded_size: 9,
         encoded: [0xFF, 0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF, FILLER],
     },
     SampleILInt {
-        value: 0xFFFFFFFFFFFFFFFF,
+        value: 0xFFFF_FFFF_FFFF_FFFF,
         encoded_size: 9,
         encoded: [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x07, FILLER],
     },
@@ -122,17 +122,17 @@ fn test_encoded_size() {
     assert_eq!(encoded_size(ILINT_BASE_U64 + 0x100), 3);
     assert_eq!(encoded_size(ILINT_BASE_U64 + 0xFFFF), 3);
     assert_eq!(encoded_size(ILINT_BASE_U64 + 0x10000), 4);
-    assert_eq!(encoded_size(ILINT_BASE_U64 + 0xFFFFFF), 4);
-    assert_eq!(encoded_size(ILINT_BASE_U64 + 0x1000000), 5);
-    assert_eq!(encoded_size(ILINT_BASE_U64 + 0xFFFFFFFF), 5);
-    assert_eq!(encoded_size(ILINT_BASE_U64 + 0x100000000), 6);
-    assert_eq!(encoded_size(ILINT_BASE_U64 + 0xFFFFFFFFFF), 6);
-    assert_eq!(encoded_size(ILINT_BASE_U64 + 0x10000000000), 7);
-    assert_eq!(encoded_size(ILINT_BASE_U64 + 0xFFFFFFFFFFFF), 7);
-    assert_eq!(encoded_size(ILINT_BASE_U64 + 0x1000000000000), 8);
-    assert_eq!(encoded_size(ILINT_BASE_U64 + 0xFFFFFFFFFFFFFF), 8);
-    assert_eq!(encoded_size(ILINT_BASE_U64 + 0x100000000000000), 9);
-    assert_eq!(encoded_size(0xFFFFFFFFFFFFFFFF), 9);
+    assert_eq!(encoded_size(ILINT_BASE_U64 + 0xFF_FFFF), 4);
+    assert_eq!(encoded_size(ILINT_BASE_U64 + 0x100_0000), 5);
+    assert_eq!(encoded_size(ILINT_BASE_U64 + 0xFFFF_FFFF), 5);
+    assert_eq!(encoded_size(ILINT_BASE_U64 + 0x1_0000_0000), 6);
+    assert_eq!(encoded_size(ILINT_BASE_U64 + 0xFF_FFFF_FFFF), 6);
+    assert_eq!(encoded_size(ILINT_BASE_U64 + 0x100_0000_0000), 7);
+    assert_eq!(encoded_size(ILINT_BASE_U64 + 0xFFFF_FFFF_FFFF), 7);
+    assert_eq!(encoded_size(ILINT_BASE_U64 + 0x1_0000_0000_0000), 8);
+    assert_eq!(encoded_size(ILINT_BASE_U64 + 0xFF_FFFF_FFFF_FFFF), 8);
+    assert_eq!(encoded_size(ILINT_BASE_U64 + 0x100_0000_0000_0000), 9);
+    assert_eq!(encoded_size(0xFFFF_FFFF_FFFF_FFFF), 9);
 }
 
 #[test]
@@ -184,7 +184,7 @@ fn test_decode() {
         let mut buff: [u8; 1] = [0];
         buff[0] = i as u8;
 
-        match decode(&mut buff) {
+        match decode(&buff) {
             Ok((v, s)) => {
                 assert_eq!(v, i as u64);
                 assert_eq!(s, 1);
