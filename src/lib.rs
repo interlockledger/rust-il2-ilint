@@ -172,3 +172,38 @@ pub fn decode(value: &[u8]) -> Result<(u64, usize)> {
         }
     }
 }
+
+/// Encodes a signed value into an unsiged value suitable
+/// to be encoded as **ILInt**.
+///
+/// Arguments:
+/// - `v`: The value to be encoded;
+///
+/// Returns the signed value ready to be encoded as an **ILInt**.
+///
+/// New since 2021-08-11.
+pub fn encode_sign(v: i64) -> u64 {
+    let tmp = v as u64;
+
+    if tmp & 0x8000_0000_0000_0000 == 0 {
+        tmp << 1
+    } else {
+        !(tmp << 1)
+    }
+}
+
+/// Decodes an unsigned value into a siged value.
+///
+/// Arguments:
+/// - `v`: The value to be decoded;
+///
+/// Returns the decoded signed value.
+///
+/// New since 2021-08-11.
+pub fn decode_sign(v: u64) -> i64 {
+    if v & 0x1 == 0 {
+        (v >> 1) as i64
+    } else {
+        (!(v >> 1)) as i64
+    }
+}

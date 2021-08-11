@@ -227,3 +227,33 @@ fn test_decode() {
         }
     }
 }
+
+#[test]
+fn test_encode_sign() {
+    // Unsigned
+    assert_eq!(encode_sign(0), 0);
+    assert_eq!(encode_sign(1), 2);
+    assert_eq!(encode_sign(0x7FFF_FFFF_FFFF_FFFF), 0xFFFF_FFFF_FFFF_FFFE);
+    // Signed
+    assert_eq!(encode_sign(-1), 1);
+    assert_eq!(encode_sign(-2), 3);
+    assert_eq!(
+        encode_sign(-9_223_372_036_854_775_808),
+        0xFFFF_FFFF_FFFF_FFFF
+    );
+}
+
+#[test]
+fn test_decode_sign() {
+    // Unsigned
+    assert_eq!(decode_sign(0), 0);
+    assert_eq!(decode_sign(2), 1);
+    assert_eq!(decode_sign(0xFFFF_FFFF_FFFF_FFFE), 0x7FFF_FFFF_FFFF_FFFF);
+    // Signed
+    assert_eq!(decode_sign(1), -1);
+    assert_eq!(decode_sign(3), -2);
+    assert_eq!(
+        decode_sign(0xFFFF_FFFF_FFFF_FFFF),
+        -9_223_372_036_854_775_808
+    );
+}
