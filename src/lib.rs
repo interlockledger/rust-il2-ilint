@@ -39,7 +39,7 @@
 #[cfg(test)]
 mod tests;
 
-/// LInt base value. All values smaller than this value are encoded as
+/// ILInt base value. All values smaller than this value are encoded as
 /// a single byte.
 pub const ILINT_BASE: u8 = 0xF8;
 
@@ -173,7 +173,7 @@ pub fn decode(value: &[u8]) -> Result<(u64, usize)> {
     }
 }
 
-/// Encodes a signed value into an unsiged value suitable
+/// Encodes a signed value into an unsigned value suitable
 /// to be encoded as **ILInt**.
 ///
 /// Arguments:
@@ -192,7 +192,7 @@ pub fn encode_sign(v: i64) -> u64 {
     }
 }
 
-/// Decodes an unsigned value into a siged value.
+/// Decodes an unsigned value into a signed value.
 ///
 /// Arguments:
 /// - `v`: The value to be decoded;
